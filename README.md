@@ -47,12 +47,12 @@ The assignment is self-driven and self-paced.
 - Run the application several times as it is and try to follow the code, to understand how it works.
 - Create a UML Class diagram of the current project. Be specific about the visibility of methods and variables.
 > The diagrams will be reviewed and evaluated. All of the members of the group must explain it the portion they are asked for.
-- Create a method called ``defaultRace`` in the `ControlCenter`. This is a simpler version of the ``simpleRandomRace`` method, but in this case everything is predefined (not randomized): 
+- (30m) Create a method called ``defaultRace`` in the `ControlCenter`. This is a simpler version of the ``simpleRandomRace`` method, but in this case everything is predefined (not randomized): 
     - We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of length; you can choose the max speed.
     - We have just 3 vehicles, they will be Scooters. Give the vehicles proper descriptions and drivers. 
-- Run the race.
+- Run the race. 
 > The code will be reviewed. Questions about the code will be asked randomly to the students. 
-- Sort the results so we print the different vehicles/drivers in order - by position. To do this, the method ``start`` can be modified just in the last part, the one with the comment  ``MODIFY THIS to show the results sorted by total time.`` 
+- (30m) Sort the results so we print the different vehicles/drivers in order - by position. To do this, the method ``start`` can be modified just in the last part, the one with the comment  ``MODIFY THIS to show the results sorted by total time.`` 
 - Implement a new type of vehicle. This vehicle is a Kart with 2 gears. Before coding it, add it tou your UML diagram. 
     - Each gear will have a minimum and maximum speed. 
     - When calling to `adaptSpeed`, the Kart can do only one of the following: 

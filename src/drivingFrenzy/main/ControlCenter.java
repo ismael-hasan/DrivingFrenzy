@@ -1,7 +1,11 @@
 package drivingFrenzy.main;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import drivingFrenzy.race.Section;
 import drivingFrenzy.race.StandardIndoorSection;
@@ -32,10 +36,10 @@ public class ControlCenter {
 	 * @throws IOException
 	 * 
 	 *
-	 * This method creates simple race with StandarIndoorSection sections
-	 * and Scooters, with initial random stats
+	 *                     This method creates simple race with StandarIndoorSection
+	 *                     sections and Scooters, with initial random stats
 	 */
-	 
+
 	private static void simpleRandomRace(int minSections, int maxSections, int minVehicles, int maxVehicles,
 			int minVehicleSpeed, int maxVehicleSpeed, int minSectionLenght, int maxSectionLength, int minSectionSpeed,
 			int maxSectionSpeed) throws IOException {
@@ -45,37 +49,38 @@ public class ControlCenter {
 
 		// first, we randomly decide on the race conditions.
 
-		int numberOfSections = random.nextInt(minSections, maxSections+1);
-		int numberOfVehicles = random.nextInt(minVehicles, maxVehicles+1);
+		int numberOfSections = random.nextInt(minSections, maxSections + 1);
+		int numberOfVehicles = random.nextInt(minVehicles, maxVehicles + 1);
 
 		// next, we create the track.
 		Section[] sections = new Section[numberOfSections];
 
 		for (int i = 0; i < numberOfSections; i++) {
-			sections[i] = new StandardIndoorSection(random.nextInt(minSectionLenght, maxSectionLength+1),
-					"una recta sencilla", random.nextInt(minSectionSpeed, maxSectionSpeed+1));
+			sections[i] = new StandardIndoorSection(random.nextInt(minSectionLenght, maxSectionLength + 1),
+					"una recta sencilla", random.nextInt(minSectionSpeed, maxSectionSpeed + 1));
 		}
 
 		Track track = new Track(sections);
 
 		// Next, we create some vehicles
 		Vehicle[] vehicles = new Vehicle[numberOfVehicles];
-		
+
 		for (int i = 0; i < numberOfVehicles; i++) {
 			vehicles[i] = new Scooter(i, "un conductor anónimo", 0, random.nextInt(minVehicleSpeed, maxVehicleSpeed),
 					"scooter");
 		}
-		
+
 		start(track, vehicles);
 	}
-	
+
 	/**
 	 * @throws IOException
 	 * 
-	 * Creates a race with 5 sections and 3 scooters
+	 *                     Creates a race with 5 sections and 3 scooters
 	 */
 	private static void defaultRace() throws IOException {
-		//We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of length; you can choose the max speed.
+		// We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of
+		// length; you can choose the max speed.
 		Section[] sections = new Section[5];
 		sections[0] = new StandardIndoorSection(1000, "recta inicial", 100);
 		sections[1] = new StandardIndoorSection(1000, "primera curva", 50);
@@ -86,21 +91,24 @@ public class ControlCenter {
 		vehicles[0] = new Scooter(0, "Valentino", 0, 70, "Ariic Gemma");
 		vehicles[1] = new Scooter(1, "Marc", 0, 87, "Daelim Besbi");
 		vehicles[2] = new Scooter(2, "Dani", 0, 95, "Honda Forza");
-		
+
 		Track track = new Track(sections);
 		start(track, vehicles);
 	}
-	
+
 	/**
-	 * This method receives a track and a list of cars and it starts a race, showing the results in command line. 
-	 * @throws IOException 
+	 * This method receives a track and a list of cars and it starts a race, showing
+	 * the results in command line.
+	 * 
+	 * @throws IOException
 	 */
 	private static void start(Track track, Vehicle[] vehicles) throws IOException {
 		// At the end, who won the race? We should re-order the results. TODO.
 
-		// We will track the total time per vehicle in an array matching positions. However, this should be done differently, with proper Java Objects.
+		// We will track the total time per vehicle in an array matching positions.
+		// However, this should be done differently, with proper Java Objects.
 		double[] times = new double[vehicles.length];
-		
+
 		// NOW WE START THE RACE!!!! We have to get the times for each vehicle per
 		// section, and then the total time.
 		nextComment(
@@ -114,8 +122,8 @@ public class ControlCenter {
 					+ vehicle.getMaxSpeed() + " km/h");
 		}
 		nextComment("Comienza la carrera!");
-		
-		for (int i=0; i<vehicles.length; i++) {
+
+		for (int i = 0; i < vehicles.length; i++) {
 			Vehicle vehicle = vehicles[i];
 			// for each vehicle, we want to track its total time.
 			int currentSectionPosition = 1;
@@ -129,30 +137,75 @@ public class ControlCenter {
 						+ section.getTheoreticalMaxSpeed() + "km/h");
 				// The driver modifies the speed based on the section about to enter
 				String action = vehicle.adaptSpeed(section);
-				double secondsThisSection = section.getLength() / (vehicle.getCurrentSpeed()*1d/1000*3600); 
+				double secondsThisSection = section.getLength() / (vehicle.getCurrentSpeed() * 1d / 1000 * 3600);
 				nextComment("\t" + action);
-				nextComment("\tPasa la sección en " + secondsThisSection + " segundos." );
+				nextComment("\tPasa la sección en " + secondsThisSection + " segundos.");
 				totalTime += secondsThisSection;
-				nextComment("\tSu tiempo total tras el tramo " + currentSectionPosition + " es de " + timeTo2Decimals(totalTime) + " segundos");
+				nextComment("\tSu tiempo total tras el tramo " + currentSectionPosition + " es de "
+						+ timeTo2Decimals(totalTime) + " segundos");
 				currentSectionPosition++;
 			}
 			nextComment("\tFinaliza el recorrido! Su tiempo total es de " + timeTo2Decimals(totalTime) + " segundos.");
 			times[i] = totalTime;
 		}
-		
-		// MODIFY THIS to show the results sorted by total time. 
-		nextComment("Y acaba la carrera! Los tiempos de los pilotos son: ");
-		for (int i=0; i<vehicles.length;i++) {
-			Vehicle vehicle = vehicles[i];
-			nextComment("\t" + vehicle.getDriver() + " con el número " + vehicle.getNumber() + " ha hecho un tiempo de " + timeTo2Decimals(times[i]) + " segundos.");
+
+		// MODIFY THIS to show the results sorted by total time.
+		nextComment("Y acaba la carrera! La clasificación es: ");
+		// We have to sort both arrays at the same time. We will not use any complex
+		// algorithms, but instead, we will iterate the array of times, get the current
+		// minimum, print it. As a trick to avoid repeated elements, we will have a
+		// third array of "already processed positions"
+		boolean[] alreadyProcessedTime = new boolean[vehicles.length];
+		for (int vehiclesLoop = 0; vehiclesLoop < vehicles.length; vehiclesLoop++) {
+			alreadyProcessedTime[vehiclesLoop] = false;
 		}
-		
+		// We do an external loop to select the current minimum time as many times as
+		// vehicles. Current position will also be the classification.
+		for (int currentPosition = 0; currentPosition < vehicles.length; currentPosition++) {
+			// In this loop, we iterate through the times we still have to process.
+			double currentShorterTime = Double.MAX_VALUE; // A trick is to initialize it to its max value, so we know
+															// any time in the array of times will be smaller
+			int currentShorterTimePosition = -1;
+			for (int vehiclesLoop = 0; vehiclesLoop < vehicles.length; vehiclesLoop++) {
+				if (alreadyProcessedTime[vehiclesLoop]) {
+					// it means we already processed the time of this vehicle, so we ignore it (do
+					// nothing).
+				} else {
+					if (times[vehiclesLoop] < currentShorterTime) {
+						// the time of this vehicle is the smaller so far
+						currentShorterTime = times[vehiclesLoop];
+						currentShorterTimePosition = vehiclesLoop;
+					}
+				}
+			}
+			// Now we know the position of the next car. Also, we have to store that we
+			// already processed it.
+			Vehicle nextVehicle = vehicles[currentShorterTimePosition];
+			Double nextVehicleTime = times[currentShorterTimePosition];
+			alreadyProcessedTime[currentShorterTimePosition] = true;
+			nextComment("\t" + nextVehicle.getDriver() + " con el número " + nextVehicle.getNumber()
+					+ " queda en posición " + (currentPosition + 1) + " con un tiempo de "
+					+ timeTo2Decimals(nextVehicleTime) + " segundos.");
+		}
+		// Note that we have better ways to sort this. The following code would
+		// automatically sort it. By default, TreeMap sorts all its entries according to
+		// their natural ordering
+/*		TreeMap<Double, Vehicle> positions = new TreeMap<>();
+		for (int i = 0; i < vehicles.length; i++) {
+			positions.put(times[i], vehicles[i]);
+		}
+		for (Entry<Double, Vehicle> currentVehicle: positions.entrySet()) {
+			nextComment("\t" + currentVehicle.getValue().getDriver() + " con el número " + currentVehicle.getValue().getNumber()
+			+ " tiene un tiempo de "
+			+ timeTo2Decimals(currentVehicle.getKey()) + " segundos.");
+		}
+*/
 	}
 
 	private static String timeTo2Decimals(double time) {
-		return 0.01 * Math.round(time*100)+"";
+		return 0.01 * Math.round(time * 100) + "";
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		System.out.println(USAGE);
 		// simpleRandomRace(50, 100, 2, 5, 40, 150, 500, 2000, 70, 150);
