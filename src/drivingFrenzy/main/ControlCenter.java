@@ -70,6 +70,28 @@ public class ControlCenter {
 	}
 	
 	/**
+	 * @throws IOException
+	 * 
+	 * Creates a race with 5 sections and 3 scooters
+	 */
+	private static void defaultRace() throws IOException {
+		//We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of length; you can choose the max speed.
+		Section[] sections = new Section[5];
+		sections[0] = new StandardIndoorSection(1000, "recta inicial", 100);
+		sections[1] = new StandardIndoorSection(1000, "primera curva", 50);
+		sections[2] = new StandardIndoorSection(1000, "recta media", 80);
+		sections[3] = new StandardIndoorSection(1000, "segunda curva muy cerrada", 50);
+		sections[4] = new StandardIndoorSection(1000, "recta final", 100);
+		Vehicle[] vehicles = new Vehicle[3];
+		vehicles[0] = new Scooter(0, "Valentino", 0, 70, "Ariic Gemma");
+		vehicles[1] = new Scooter(1, "Marc", 0, 87, "Daelim Besbi");
+		vehicles[2] = new Scooter(2, "Dani", 0, 95, "Honda Forza");
+		
+		Track track = new Track(sections);
+		start(track, vehicles);
+	}
+	
+	/**
 	 * This method receives a track and a list of cars and it starts a race, showing the results in command line. 
 	 * @throws IOException 
 	 */
@@ -133,7 +155,8 @@ public class ControlCenter {
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println(USAGE);
-		simpleRandomRace(50, 100, 2, 5, 40, 150, 500, 2000, 70, 150);
+		// simpleRandomRace(50, 100, 2, 5, 40, 150, 500, 2000, 70, 150);
+		defaultRace();
 	}
 
 	/*
