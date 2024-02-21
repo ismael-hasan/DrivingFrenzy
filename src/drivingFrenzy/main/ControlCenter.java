@@ -1,7 +1,9 @@
 package drivingFrenzy.main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import drivingFrenzy.race.Section;
@@ -170,6 +172,19 @@ public class ControlCenter {
 	}
 
 	/**
+	 * @throws IOException It combines indoor and outdoor.
+	 */
+	private static void scootersLongRace() throws IOException {
+		Vehicle[] vehicles = new Vehicle[3];
+		vehicles[0] = new Scooter(3, "Valentino", 0, 70, "Ariic Gemma");
+		vehicles[1] = new Scooter(4, "Marc", 0, 87, "Daelim Besbi");
+		vehicles[2] = new Scooter(5, "Dani", 0, 95, "Honda Forza");
+
+		Track track = createLongTrack();
+		start(track, vehicles);
+	}	
+	
+	/**
 	 * This method receives a track and a list of cars and it starts a race, showing
 	 * the results in command line.
 	 * 
@@ -283,7 +298,8 @@ public class ControlCenter {
 						+ timeTo2Decimals(nextVehicleTime) + " segundos.");
 			} else {
 				nextComment("\t" + nextVehicle.getDriver() + " con el número " + nextVehicle.getNumber()
-				+ " quedó descalificado en " + disqualifiedVehicles[currentShorterTimePosition].getDescription());
+						+ " quedó descalificado en "
+						+ disqualifiedVehicles[currentShorterTimePosition].getDescription());
 			}
 		}
 		// Note that we have better ways to sort this. The following code would
@@ -299,6 +315,55 @@ public class ControlCenter {
 		 */
 	}
 
+	/**
+	 * Creates a track of at least 50km. On purpose we are not making it
+	 * configurable, but it could receive input parameters.
+	 */
+	private static Track createLongTrack() {
+		String[] normalSectionsDescription = { "una recta de pabellón", "una curva de pabellón" };
+		String[] normalOutdoorSections = { "una recta exterior", "una curva exterior" };
+		String[] difficultOutdoorSections = { "una recta exterior con aceite", "una curva exterior con polvo" };
+		String[] easyOutdoorSections = { "una recta exterior muy segura", "una curva exterior muy peraltada" };
+
+		Random random = new Random(System.currentTimeMillis());
+		List<Section> sections = new ArrayList<Section>();
+		int totalLengthInMeters = 0;
+		while (totalLengthInMeters < 50000) {
+			// we create the next section randomly.
+			int typeOfSection = random.nextInt(0, 4);
+			int length = random.nextInt(500, 2000);
+			int theoreticalMaxSpeed = random.nextInt(40, 201);
+			Section newSection;
+			if (typeOfSection == 0) {
+				// normal indoor
+				newSection = new StandardIndoorSection(length, normalSectionsDescription[random.nextInt(0, normalSectionsDescription.length)],
+						theoreticalMaxSpeed);
+			} else if (typeOfSection == 1) {
+				// normal outdoor
+				newSection = new StandardOutdoorSection(length, normalOutdoorSections[random.nextInt(0, normalOutdoorSections.length)],
+						theoreticalMaxSpeed, 1.0);
+			} else if (typeOfSection == 2) {
+				// difficult outdoor
+				newSection = new StandardOutdoorSection(length, difficultOutdoorSections[random.nextInt(0, difficultOutdoorSections.length)],
+						theoreticalMaxSpeed, random.nextDouble(0.8,1.0));
+			} else if (typeOfSection == 3) {
+				// easy outdoor
+				newSection = new StandardOutdoorSection(length, easyOutdoorSections[random.nextInt(0, easyOutdoorSections.length)],
+						theoreticalMaxSpeed, random.nextDouble(1.0,1.1));
+			} else {
+				//unreachable due to the way in which typeOfSection is created
+				newSection=null;
+			}
+			sections.add(newSection);
+			totalLengthInMeters += length;
+		}
+
+		Section[] fingerprint = new Section[]{};
+		Track result = new Track(sections.toArray(fingerprint));
+
+		return result;
+	}
+
 	private static String timeTo2Decimals(double time) {
 		return 0.01 * Math.round(time * 100) + "";
 	}
@@ -308,8 +373,10 @@ public class ControlCenter {
 		// simpleRandomRace(50, 100, 2, 5, 40, 150, 500, 2000, 70, 150);
 		// defaultRace();
 		// kartsRace();
-		kartsAndScootersRace();
+//		kartsAndScootersRace();
 //		kartsAndScootersMixedRace();
+		scootersLongRace();
+		
 	}
 
 	/*
