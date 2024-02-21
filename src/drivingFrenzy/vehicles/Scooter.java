@@ -2,62 +2,27 @@ package drivingFrenzy.vehicles;
 
 import drivingFrenzy.race.Section;
 
-public class Scooter implements Vehicle {
-
-	private int number;
-	private String driver;
-	private int currentSpeed;
-	private int maxSpeed;
-	private String description;
+public class Scooter extends DefaultVehicle {
 	
 	public Scooter(int number, String driver, int currentSpeed, int maxSpeed, String description) {
-		super();
-		this.number = number;
-		this.driver = driver;
-		this.currentSpeed = currentSpeed;
-		this.maxSpeed = maxSpeed;
-		this.description = description;
-	}
-
-	@Override
-	public int getNumber() {
-		return number;
-	}
-
-	@Override
-	public String getDriver() {
-		return driver;
-	}
-
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	@Override
-	public int getCurrentSpeed() {
-		return currentSpeed;
-	}
-
-	@Override
-	public int getMaxSpeed() {
-		return maxSpeed;
+		super(number, driver, currentSpeed, maxSpeed, description);
 	}
 
 	@Override
 	public String adaptSpeed(Section nextSection) {
 		String result = "";
-		if (nextSection.getTheoreticalMaxSpeed() > currentSpeed) {
-			int nextSpeed =  Math.min(maxSpeed, nextSection.getTheoreticalMaxSpeed());
-			result += "El nÃºmero " + number + " acelera desde " + currentSpeed + " a " + nextSpeed + ". ";
-			currentSpeed = nextSpeed;
-			if (maxSpeed == currentSpeed) {
-				result += driver + " aprieta a fondo, pero su " + description + " estÃ¡ al lÃ­mite!";
+		if (nextSection.getTheoreticalMaxSpeed() > getCurrentSpeed()) {
+			int nextSpeed =  Math.min(getMaxSpeed(), nextSection.getTheoreticalMaxSpeed());
+			result += "El número " + getNumber() + " acelera desde " + getCurrentSpeed() + " a " + nextSpeed + ". ";
+			setCurrentSpeed(nextSpeed);
+			if (getMaxSpeed() == getCurrentSpeed()) {
+				result += getDriver() + " aprieta a fondo, pero su " + getDescription()+ " está al límite!";
 			}
 		} else {
-			currentSpeed = nextSection.getTheoreticalMaxSpeed();
-			result += "El nÃºmero " + number + " reduce la velocidad a " + currentSpeed;
+			setCurrentSpeed(nextSection.getTheoreticalMaxSpeed());
+			result += "El número " + getNumber() + " reduce la velocidad a " + getCurrentSpeed();
 		}
+		result += super.adaptSpeed(nextSection);
 		return result;
 	}
 
