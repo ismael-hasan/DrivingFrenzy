@@ -116,7 +116,30 @@ public class ControlCenter {
 		Track track = new Track(sections);
 		start(track, vehicles);
 	}
-	
+
+	private static void kartsAndScootersRace() throws IOException {
+		// We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of
+		// length; you can choose the max speed.
+		Section[] sections = new Section[6];
+
+		sections[0] = new StandardIndoorSection(100, "salida", 20);
+		sections[1] = new StandardIndoorSection(1000, "recta inicial", 100);
+		sections[2] = new StandardIndoorSection(1000, "primera curva", 50);
+		sections[3] = new StandardIndoorSection(1000, "recta media", 120);
+		sections[4] = new StandardIndoorSection(1000, "segunda curva muy cerrada", 30);
+		sections[5] = new StandardIndoorSection(1000, "recta final", 100);
+		Vehicle[] vehicles = new Vehicle[6];
+		vehicles[0] = new Kart(0, "Carlos", 0, 50, 40, 100, "kart rojo");
+		vehicles[1] = new Kart(1, "Carlos Jr", 0, 30, 25, 80, "kart rojo");
+		vehicles[2] = new Kart(2, "Fernando", 0, 60, 55, 110, "kart rojo");
+		vehicles[3] = new Scooter(0, "Valentino", 0, 70, "Ariic Gemma");
+		vehicles[4] = new Scooter(1, "Marc", 0, 87, "Daelim Besbi");
+		vehicles[5] = new Scooter(2, "Dani", 0, 95, "Honda Forza");
+
+		Track track = new Track(sections);
+		start(track, vehicles);
+	}
+
 
 	/**
 	 * This method receives a track and a list of cars and it starts a race, showing
@@ -232,7 +255,8 @@ public class ControlCenter {
 		System.out.println(USAGE);
 		// simpleRandomRace(50, 100, 2, 5, 40, 150, 500, 2000, 70, 150);
 		// defaultRace();
-		kartsRace();
+		// kartsRace();
+		kartsAndScootersRace();
 	}
 
 	/*
