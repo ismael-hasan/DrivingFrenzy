@@ -371,8 +371,8 @@ public class ControlCenter {
 	public static void main(String[] args) throws IOException {
 		System.out.println(USAGE);
 		// simpleRandomRace(50, 100, 2, 5, 40, 150, 500, 2000, 70, 150);
-		// defaultRace();
-		// kartsRace();
+//		 defaultRace();
+//		 kartsRace();
 //		kartsAndScootersRace();
 //		kartsAndScootersMixedRace();
 		scootersLongRace();
