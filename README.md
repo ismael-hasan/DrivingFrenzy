@@ -49,7 +49,8 @@ The assignment is self-driven and self-paced.
 > The diagrams will be reviewed and evaluated. All of the members of the group must explain it the portion they are asked for.
 - (30m) Create a method called ``defaultRace`` in the `ControlCenter`. This is a simpler version of the ``simpleRandomRace`` method, but in this case everything is predefined (not randomized): 
     - We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of length; you can choose the max speed.
-    - We have just 3 vehicles, they will be Scooters. Give the vehicles proper descriptions and drivers. 
+    - We have just 3 vehicles, they will be Scooters. Give the vehicles proper descriptions and drivers.
+    - Remember to change the commentator welcoming message in the `start` method. 
 - Run the race. 
 > The code will be reviewed. Questions about the code will be asked randomly to the students. 
 - (30m) Sort the results so we print the different vehicles/drivers in order - by position. To do this, the method ``start`` can be modified just in the last part, the one with the comment  ``MODIFY THIS to show the results sorted by total time.`` 
@@ -59,11 +60,11 @@ The assignment is self-driven and self-paced.
         - Increase or decrease speed within the current gear. 
         - Shift a gear up (new speed will be the minimum speed of the second gear).
         - Shift a gear down (new speed can be any within the range of the first gear).
-- Create a new race (i.e, a new method in the Control Center) and test the new Kart.
+- Create a new race (i.e, a new method in the Control Center) and test the new Kart. Remember to change the commentator welcoming message in the `start` method.
 > The code will be reviewed. Questions about the code will be asked randomly to the students. 
 
 ### Next steps 
-- Create a race in which both Scooters and Karts compete together. Remember, **the ``start`` method cannot be modified at this point**.
+- Create a race in which both Scooters and Karts compete together. Remember, **the ``start`` method cannot be modified at this point**. Remember to change the commentator welcoming message in the `start` method.
     - Choose 3 real one-gear Scooters and 3 real 2-gear Karts to get actual statistics on speed - don't spend more than 10 minutes searching, otherwise, just make up the numbers.
 - Create a new type of ``Section`` called ``StandardOutsideSection``. This one has its theoretical max speed, but also the actual one. The actual one is just a percentage of the theoretical one. 
     - For instance, think of a rainy day. Actual max speed could be ``0.7 * maxSpeed``. Or, think of a very sunny day; the actual max speed could be ``1.1 * maxSpeed``.
