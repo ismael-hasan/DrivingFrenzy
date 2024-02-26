@@ -10,6 +10,7 @@ import drivingFrenzy.race.Section;
 import drivingFrenzy.race.StandardIndoorSection;
 import drivingFrenzy.race.StandardOutdoorSection;
 import drivingFrenzy.race.Track;
+import drivingFrenzy.vehicles.Car;
 import drivingFrenzy.vehicles.Kart;
 import drivingFrenzy.vehicles.Scooter;
 import drivingFrenzy.vehicles.Vehicle;
@@ -36,7 +37,6 @@ public class ControlCenter {
 	 * @param maxSectionSpeed
 	 * @throws IOException
 	 * 
-	 *
 	 *                     This method creates simple race with StandarIndoorSection
 	 *                     sections and Scooters, with initial random stats
 	 */
@@ -182,8 +182,71 @@ public class ControlCenter {
 
 		Track track = createLongTrack();
 		start(track, vehicles);
-	}	
-	
+	}
+
+	/**
+	 * @param maxSpeed
+	 * @return the array of min speed per gears; null if values are not valid.
+	 * 
+	 *         Helper method to create gears for the cars
+	 */
+	private static int[] createMinSpeedGears(int maxSpeed, int numberOfGears) {
+		Random randomizer = new Random();
+		if (numberOfGears <= 1 || maxSpeed < 30) {
+			return null;
+		}
+		int[] result = new int[numberOfGears];
+		result[0] = 0;
+		int speedIncreaser = maxSpeed / (numberOfGears);
+		for (int i = 1; i < numberOfGears; i++) {
+			int thisSpeed = result[i - 1] + speedIncreaser;
+			int speedModifier = randomizer.nextInt(maxSpeed / (numberOfGears * 10));
+			thisSpeed += speedModifier * (randomizer.nextBoolean() ? -1 : 1);
+			result[i] = thisSpeed;
+		}
+		return result;
+	}
+
+	private static int[] createMaxSpeedGears(int maxSpeed, int[] minSpeedGears) {
+		Random randomizer = new Random();
+		if (maxSpeed < 30) {
+			return null;
+		}
+		int numberOfGears = minSpeedGears.length;
+		int[] result = new int[numberOfGears];
+		result[numberOfGears - 1] = maxSpeed;
+		for (int i = 0; i < numberOfGears - 1; i++) {
+			int minSpeedNextGear = minSpeedGears[i + 1];
+			result[i] = minSpeedNextGear + randomizer.nextInt(maxSpeed / 10);
+		}
+		return result;
+	}
+
+	/**
+	 * @throws IOException It combines indoor and outdoor.
+	 */
+	private static void carsLongRace() throws IOException {
+		Vehicle[] vehicles = new Vehicle[3];
+		int maxSpeed = 340;
+		int[] min = createMinSpeedGears(maxSpeed, 6);
+		int[] max = createMaxSpeedGears(maxSpeed, min);
+		vehicles[0] = new Car(0, "Verstappen", 0, maxSpeed, "Red Bull", Car.DRIVER_STYLE_AGGRESSIVE, min, max);
+
+		maxSpeed = 333;
+		min = createMinSpeedGears(maxSpeed, 6);
+		max = createMaxSpeedGears(maxSpeed, min);
+		vehicles[1] = new Car(0, "Hamilton", 0, maxSpeed, "Mercedes", Car.DRIVER_STYLE_STANDARD, min, max);
+
+		maxSpeed = 337;
+		min = createMinSpeedGears(maxSpeed, 6);
+		max = createMaxSpeedGears(maxSpeed, min);
+		vehicles[2] = new Car(0, "LeClerc", 0, maxSpeed, "Ferrari", Car.DRIVER_STYLE_CONSERVATIVE, min, max);
+
+
+		Track track = createCustomTrack(20000, 1000, 5000, 70, 350);
+		start(track, vehicles);
+	}
+
 	/**
 	 * This method receives a track and a list of cars and it starts a race, showing
 	 * the results in command line.
@@ -316,10 +379,26 @@ public class ControlCenter {
 	}
 
 	/**
-	 * Creates a track of at least 50km. On purpose we are not making it
-	 * configurable, but it could receive input parameters.
+	 * Creates a track of at least 50km and random speed 40-200. On purpose we are
+	 * not making it configurable and it relies on another method, but it could
+	 * receive input parameters.
 	 */
 	private static Track createLongTrack() {
+		return createCustomTrack(50000, 500, 2000, 40, 200);
+	}
+
+	/**
+	 * @param totalLength
+	 * @param minSectionLength
+	 * @param maxSectionLength
+	 * @param minSpeed
+	 * @param maxSpeed
+	 * @return
+	 * 
+	 * It creates a track with the proposed characteristics
+	 */
+	private static Track createCustomTrack(int totalLength, int minSectionLength, int maxSectionLength, int minSpeed,
+			int maxSpeed) {
 		String[] normalSectionsDescription = { "una recta de pabellón", "una curva de pabellón" };
 		String[] normalOutdoorSections = { "una recta exterior", "una curva exterior" };
 		String[] difficultOutdoorSections = { "una recta exterior con aceite", "una curva exterior con polvo" };
@@ -328,37 +407,41 @@ public class ControlCenter {
 		Random random = new Random(System.currentTimeMillis());
 		List<Section> sections = new ArrayList<Section>();
 		int totalLengthInMeters = 0;
-		while (totalLengthInMeters < 50000) {
+		while (totalLengthInMeters < totalLength) {
 			// we create the next section randomly.
 			int typeOfSection = random.nextInt(0, 4);
-			int length = random.nextInt(500, 2000);
-			int theoreticalMaxSpeed = random.nextInt(40, 201);
+			int length = random.nextInt(minSectionLength, maxSectionLength);
+			int theoreticalMaxSpeed = random.nextInt(minSpeed, maxSpeed + 1);
 			Section newSection;
 			if (typeOfSection == 0) {
 				// normal indoor
-				newSection = new StandardIndoorSection(length, normalSectionsDescription[random.nextInt(0, normalSectionsDescription.length)],
+				newSection = new StandardIndoorSection(length,
+						normalSectionsDescription[random.nextInt(0, normalSectionsDescription.length)],
 						theoreticalMaxSpeed);
 			} else if (typeOfSection == 1) {
 				// normal outdoor
-				newSection = new StandardOutdoorSection(length, normalOutdoorSections[random.nextInt(0, normalOutdoorSections.length)],
-						theoreticalMaxSpeed, 1.0);
+				newSection = new StandardOutdoorSection(length,
+						normalOutdoorSections[random.nextInt(0, normalOutdoorSections.length)], theoreticalMaxSpeed,
+						1.0);
 			} else if (typeOfSection == 2) {
 				// difficult outdoor
-				newSection = new StandardOutdoorSection(length, difficultOutdoorSections[random.nextInt(0, difficultOutdoorSections.length)],
-						theoreticalMaxSpeed, random.nextDouble(0.8,1.0));
+				newSection = new StandardOutdoorSection(length,
+						difficultOutdoorSections[random.nextInt(0, difficultOutdoorSections.length)],
+						theoreticalMaxSpeed, random.nextDouble(0.8, 1.0));
 			} else if (typeOfSection == 3) {
 				// easy outdoor
-				newSection = new StandardOutdoorSection(length, easyOutdoorSections[random.nextInt(0, easyOutdoorSections.length)],
-						theoreticalMaxSpeed, random.nextDouble(1.0,1.1));
+				newSection = new StandardOutdoorSection(length,
+						easyOutdoorSections[random.nextInt(0, easyOutdoorSections.length)], theoreticalMaxSpeed,
+						random.nextDouble(1.0, 1.1));
 			} else {
-				//unreachable due to the way in which typeOfSection is created
-				newSection=null;
+				// unreachable due to the way in which typeOfSection is created
+				newSection = null;
 			}
 			sections.add(newSection);
 			totalLengthInMeters += length;
 		}
 
-		Section[] fingerprint = new Section[]{};
+		Section[] fingerprint = new Section[] {};
 		Track result = new Track(sections.toArray(fingerprint));
 
 		return result;
@@ -375,8 +458,8 @@ public class ControlCenter {
 //		 kartsRace();
 //		kartsAndScootersRace();
 //		kartsAndScootersMixedRace();
-		scootersLongRace();
-		
+//		scootersLongRace();
+		carsLongRace();
 	}
 
 	/*
