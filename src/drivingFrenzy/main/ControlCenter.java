@@ -25,6 +25,9 @@ public class ControlCenter {
 			+ "El programa automáticamente para tras imprimir una línea, esperando a que el usuario pulse enter para continuar.";
 
 	/**
+	 * It creates simple race with StandarIndoorSection sections and Scooters, with
+	 * initial random stats
+	 * 
 	 * @param minSections
 	 * @param maxSections
 	 * @param minVehicles
@@ -37,8 +40,6 @@ public class ControlCenter {
 	 * @param maxSectionSpeed
 	 * @throws IOException
 	 * 
-	 *                     This method creates simple race with StandarIndoorSection
-	 *                     sections and Scooters, with initial random stats
 	 */
 
 	private static void simpleRandomRace(int minSections, int maxSections, int minVehicles, int maxVehicles,
@@ -71,13 +72,13 @@ public class ControlCenter {
 					"scooter");
 		}
 
-		start(track, vehicles);
+		start(track, vehicles, false);
 	}
 
 	/**
+	 * Creates a race with 5 sections and 3 scooters
 	 * @throws IOException
 	 * 
-	 *                     Creates a race with 5 sections and 3 scooters
 	 */
 	private static void defaultRace() throws IOException {
 		// We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of
@@ -94,7 +95,7 @@ public class ControlCenter {
 		vehicles[2] = new Scooter(2, "Dani", 0, 95, "Honda Forza");
 
 		Track track = new Track(sections);
-		start(track, vehicles);
+		start(track, vehicles, false);
 	}
 
 	private static void kartsRace() throws IOException {
@@ -114,7 +115,7 @@ public class ControlCenter {
 		vehicles[2] = new Kart(2, "Fernando", 0, 60, 55, 110, "kart rojo");
 
 		Track track = new Track(sections);
-		start(track, vehicles);
+		start(track, vehicles, false);
 	}
 
 	private static void kartsAndScootersRace() throws IOException {
@@ -137,11 +138,12 @@ public class ControlCenter {
 		vehicles[5] = new Scooter(5, "Dani", 0, 95, "Honda Forza");
 
 		Track track = new Track(sections);
-		start(track, vehicles);
+		start(track, vehicles, false);
 	}
 
 	/**
-	 * @throws IOException It combines indoor and outdoor.
+	 * It combines indoor and outdoor.
+	 * @throws IOException 
 	 */
 	private static void kartsAndScootersMixedRace() throws IOException {
 		// We have a track with 5 sections of 1000, 2000, 3000, 2000 and 1000 meters of
@@ -168,11 +170,12 @@ public class ControlCenter {
 		vehicles[5] = new Scooter(5, "Dani", 0, 95, "Honda Forza");
 
 		Track track = new Track(sections);
-		start(track, vehicles);
+		start(track, vehicles, false);
 	}
 
 	/**
-	 * @throws IOException It combines indoor and outdoor.
+	 * It combines indoor and outdoor.
+	 * @throws IOException 
 	 */
 	private static void scootersLongRace() throws IOException {
 		Vehicle[] vehicles = new Vehicle[3];
@@ -180,15 +183,14 @@ public class ControlCenter {
 		vehicles[1] = new Scooter(4, "Marc", 0, 87, "Daelim Besbi");
 		vehicles[2] = new Scooter(5, "Dani", 0, 95, "Honda Forza");
 
-		Track track = createLongTrack();
-		start(track, vehicles);
+		Track track = Utils.createLongTrack();
+		start(track, vehicles, false);
 	}
 
 	/**
+	 * Helper method to create gears for the cars
 	 * @param maxSpeed
-	 * @return the array of min speed per gears; null if values are not valid.
-	 * 
-	 *         Helper method to create gears for the cars
+	 * @return the array of min speed per gears; null if values are not valid.        
 	 */
 	private static int[] createMinSpeedGears(int maxSpeed, int numberOfGears) {
 		Random randomizer = new Random();
@@ -223,7 +225,8 @@ public class ControlCenter {
 	}
 
 	/**
-	 * @throws IOException It combines indoor and outdoor.
+	 * It combines indoor and outdoor.
+	 * @throws IOException 
 	 */
 	private static void carsLongRace() throws IOException {
 		Vehicle[] vehicles = new Vehicle[3];
@@ -242,19 +245,23 @@ public class ControlCenter {
 		max = createMaxSpeedGears(maxSpeed, min);
 		vehicles[2] = new Car(0, "LeClerc", 0, maxSpeed, "Ferrari", Car.DRIVER_STYLE_CONSERVATIVE, min, max);
 
-
-		Track track = createCustomTrack(20000, 1000, 5000, 70, 350);
-		start(track, vehicles);
+		Track track = Utils.createCustomTrack(50000, 1000, 5000, 70, 350);
+		start(track, vehicles, false);
 	}
 
 	/**
-	 * This method receives a track and a list of cars and it starts a race, showing
-	 * the results in command line.
+	 * It will start a race for the proposed track with the proposed vehicles.
+	 * <b>isLive</b> is used to decide if all drivers compete one each time, or if
+	 * all driver compete at the same time.
 	 * 
+	 * @param track
+	 * @param vehicles
+	 * @param isLive
 	 * @throws IOException
+	 * 
+	 * 
 	 */
-	private static void start(Track track, Vehicle[] vehicles) throws IOException {
-		// At the end, who won the race? We should re-order the results. TODO.
+	private static void start(Track track, Vehicle[] vehicles, boolean isLive) throws IOException {
 
 		// We will track the total time per vehicle in an array matching positions.
 		// However, this should be done differently, with proper Java Objects.
@@ -266,8 +273,8 @@ public class ControlCenter {
 
 		// NOW WE START THE RACE!!!! We have to get the times for each vehicle per
 		// section, and then the total time.
-		nextComment(
-				"Bienvenidos a la carrera simple en línea recta indoor. Hoy tenemos algunas scooters tratando de realizar el trayecto lo más rápido posible!");
+
+		nextComment("Bienvenidos a la carrera de hoy.");
 		nextComment("Comencemos con alguna información sobre la pista:");
 		nextComment(track.getDescription());
 		nextComment("Tenemos hoy " + vehicles.length + " competidores: ");
@@ -283,8 +290,10 @@ public class ControlCenter {
 			// for each vehicle, we want to track its total time.
 			int currentSectionPosition = 1;
 			double totalTime = 0;
-			nextComment("El siguiente piloto es " + vehicle.getDriver() + " con el número " + vehicle.getNumber()
-					+ ". Se prepara para salir!");
+			if (!isLive) {
+				nextComment("El siguiente piloto es " + vehicle.getDriver() + " con el número " + vehicle.getNumber()
+						+ ". Se prepara para salir!");
+			}
 			for (Section section : track.getSections()) {
 				nextComment("\tEl siguiente tramo es el número " + currentSectionPosition + ", "
 						+ section.getDescription() + " de " + section.getLength()
@@ -299,7 +308,7 @@ public class ControlCenter {
 					nextComment("\tPasa la sección en " + secondsThisSection + " segundos.");
 					totalTime += secondsThisSection;
 					nextComment("\tSu tiempo total tras el tramo " + currentSectionPosition + " es de "
-							+ timeTo2Decimals(totalTime) + " segundos");
+							+ Utils.timeTo2Decimals(totalTime) + " segundos");
 					currentSectionPosition++;
 				} else {
 					// too fast!
@@ -312,7 +321,7 @@ public class ControlCenter {
 			}
 			if (disqualifiedVehicles[i] == null) {
 				nextComment(
-						"\tFinaliza el recorrido! Su tiempo total es de " + timeTo2Decimals(totalTime) + " segundos.");
+						"\tFinaliza el recorrido! Su tiempo total es de " + Utils.timeTo2Decimals(totalTime) + " segundos.");
 				times[i] = totalTime;
 			} else {
 				times[i] = Integer.MAX_VALUE;
@@ -358,7 +367,7 @@ public class ControlCenter {
 			if (disqualifiedVehicles[currentShorterTimePosition] == null) {
 				nextComment("\t" + nextVehicle.getDriver() + " con el número " + nextVehicle.getNumber()
 						+ " queda en posición " + (currentPosition + 1) + " con un tiempo de "
-						+ timeTo2Decimals(nextVehicleTime) + " segundos.");
+						+ Utils.timeTo2Decimals(nextVehicleTime) + " segundos.");
 			} else {
 				nextComment("\t" + nextVehicle.getDriver() + " con el número " + nextVehicle.getNumber()
 						+ " quedó descalificado en "
@@ -376,79 +385,6 @@ public class ControlCenter {
 		 * + currentVehicle.getValue().getNumber() + " tiene un tiempo de " +
 		 * timeTo2Decimals(currentVehicle.getKey()) + " segundos."); }
 		 */
-	}
-
-	/**
-	 * Creates a track of at least 50km and random speed 40-200. On purpose we are
-	 * not making it configurable and it relies on another method, but it could
-	 * receive input parameters.
-	 */
-	private static Track createLongTrack() {
-		return createCustomTrack(50000, 500, 2000, 40, 200);
-	}
-
-	/**
-	 * @param totalLength
-	 * @param minSectionLength
-	 * @param maxSectionLength
-	 * @param minSpeed
-	 * @param maxSpeed
-	 * @return
-	 * 
-	 * It creates a track with the proposed characteristics
-	 */
-	private static Track createCustomTrack(int totalLength, int minSectionLength, int maxSectionLength, int minSpeed,
-			int maxSpeed) {
-		String[] normalSectionsDescription = { "una recta de pabellón", "una curva de pabellón" };
-		String[] normalOutdoorSections = { "una recta exterior", "una curva exterior" };
-		String[] difficultOutdoorSections = { "una recta exterior con aceite", "una curva exterior con polvo" };
-		String[] easyOutdoorSections = { "una recta exterior muy segura", "una curva exterior muy peraltada" };
-
-		Random random = new Random(System.currentTimeMillis());
-		List<Section> sections = new ArrayList<Section>();
-		int totalLengthInMeters = 0;
-		while (totalLengthInMeters < totalLength) {
-			// we create the next section randomly.
-			int typeOfSection = random.nextInt(0, 4);
-			int length = random.nextInt(minSectionLength, maxSectionLength);
-			int theoreticalMaxSpeed = random.nextInt(minSpeed, maxSpeed + 1);
-			Section newSection;
-			if (typeOfSection == 0) {
-				// normal indoor
-				newSection = new StandardIndoorSection(length,
-						normalSectionsDescription[random.nextInt(0, normalSectionsDescription.length)],
-						theoreticalMaxSpeed);
-			} else if (typeOfSection == 1) {
-				// normal outdoor
-				newSection = new StandardOutdoorSection(length,
-						normalOutdoorSections[random.nextInt(0, normalOutdoorSections.length)], theoreticalMaxSpeed,
-						1.0);
-			} else if (typeOfSection == 2) {
-				// difficult outdoor
-				newSection = new StandardOutdoorSection(length,
-						difficultOutdoorSections[random.nextInt(0, difficultOutdoorSections.length)],
-						theoreticalMaxSpeed, random.nextDouble(0.8, 1.0));
-			} else if (typeOfSection == 3) {
-				// easy outdoor
-				newSection = new StandardOutdoorSection(length,
-						easyOutdoorSections[random.nextInt(0, easyOutdoorSections.length)], theoreticalMaxSpeed,
-						random.nextDouble(1.0, 1.1));
-			} else {
-				// unreachable due to the way in which typeOfSection is created
-				newSection = null;
-			}
-			sections.add(newSection);
-			totalLengthInMeters += length;
-		}
-
-		Section[] fingerprint = new Section[] {};
-		Track result = new Track(sections.toArray(fingerprint));
-
-		return result;
-	}
-
-	private static String timeTo2Decimals(double time) {
-		return 0.01 * Math.round(time * 100) + "";
 	}
 
 	public static void main(String[] args) throws IOException {
